@@ -1,0 +1,80 @@
+
+.container{
+    width: 90vw;
+    height: 90vh;    
+    background-color: hsl(0, 0%, 80%, 0.3);
+    backdrop-filter: blur(5px);
+    display: flex;
+    gap: 1rem;  
+}
+.contacts-container{
+    width: 15%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    background-color: hsl(0, 0%, 70%);
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scroll-behavior: smooth;
+}
+
+.contacts{
+    width: 100%;
+    background-color: hsl(0, 0%, 95%);
+    display: flex;
+    justify-content: center;
+    border-radius: 1rem;
+}
+.contacts:hover{
+    cursor: pointer;
+    background-color: hsl(0, 0%, 85%);
+}
+.selected{
+    background-color: hsl(0, 0%, 85%);
+}
+
+.chat-container{
+    display: grid;
+    grid-template-rows: 0.25fr 4fr 1fr;
+    gap: 0.25rem;
+    flex: 1 1 auto;
+}
+
+#chatInput{
+    color: hsl(0, 0%, 15%);
+    border: none;
+    outline: none;
+    background-color: hsl(0, 0%, 95%);
+    padding: 0.5rem;
+    border-radius: 1rem;
+}
+
+.message-screen{
+    background-color: hsl(0, 0%, 85%);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scroll-behavior: smooth;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    /* justify-content: flex-end; */
+    padding: 0.25rem 0.5rem;
+    min-height: 0;
+}
+
+.sent{
+    align-self: self-end;
+    background-color: hsl(240, 100%, 50%);
+    padding: 0.5rem;
+    border-radius: 1rem;
+    color: hsl(0, 0%, 90%)
+}
+
+.received{
+    align-self: self-start;
+    background-color: hsl(0, 0%, 70%);
+    padding: 0.5rem;
+    border-radius: 1rem;
+}
+

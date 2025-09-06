@@ -1,17 +1,23 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import '../assets/form.css'
 import axios from "axios";
 import userContext from "../UserContext";
 
 function Login() {
-    
+
     const navigate = useNavigate();
-    const {currentUser, setCurrentUser} = useContext(userContext);
     const [values, setValues] = useState({
         username: '',
         password: ''
     })
+
+    useEffect(() => {
+        const data = JSON.parse(localStorage.getItem('current-chat-user'));
+        if(data?.username){
+           navigate("/"); 
+        }
+    }, []);
 
     function handleInput(event) {
         setValues({
@@ -30,8 +36,8 @@ function Login() {
                 alert(data.message);
             }
             else{
-                setCurrentUser(data);
                 alert(data.message);
+                localStorage.setItem('current-chat-user', JSON.stringify(data));
                 navigate("/");
             }
         }

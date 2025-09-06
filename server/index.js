@@ -1,17 +1,26 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const authRoutes = require('./routes/auth.js')
+const authRoutes = require('./routes/authRoutes.js');
+const messageRoutes = require('./routes/messageRoutes.js');
+const User = require('./models/userModel.js');
+const jwt = require('jsonwebtoken');
 const app = express();
+const cookieParser = require('cookie-parser');
+const { Server } = require('socket.io');
+
+require('dotenv').config();
 
 app.use(express.json());
+app.use(cookieParser());
 app.use(cors());
+
 
 const URI = "mongodb+srv://kath1512:pAtHsuhKReU5WD0V@cluster0.l0surwm.mongodb.net/";
 
 const connectDb = async () => {
     try{
-        await mongoose.connect(URI)
+        await mongoose.connect(URI);
         console.log("Connected to MongoDB")
     }
     catch(err){
@@ -21,6 +30,45 @@ const connectDb = async () => {
 
 connectDb();
 
-app.use('/api/auth', authRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/message", messageRoutes);
 
-app.listen(5000, () => console.log('Start server at 5000'));
+const server = app.listen(5000, () => console.log('Start server at 5000'));
+
+const io = new Server(server, {
+    cors: { origin: "*" }
+});
+
+let userSocket = new Map();
+
+io.on("connection", (socket) => {
+    console.log(socket.id);
+    //get new user
+    socket.on("add-user", ({userId}) => {
+        userSocket.set(userId, socket.id);
+    });
+    //get message
+    socket.on("add-msg", (params) => {
+        const {from, to, message} = params;
+        const targetedSocketId = userSocket.get(to);
+        if(!targetedSocketId) return;
+        // foward message to targeted client
+        socket.to(targetedSocketId).emit("new-msg", {
+            from: from,
+            fromSelf: false,
+            message: message
+        });
+
+    });
+
+    socket.on("disconnect", () => {
+        console.log("User disconnected");
+    });
+
+
+});
+
+
+
+
+
