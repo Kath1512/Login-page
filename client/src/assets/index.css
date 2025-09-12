@@ -3,7 +3,7 @@
   line-height: 1.5;
   font-weight: 400;
   font-size: 16px;
-  color: hsl(0, 0%, 15%);
+  color: hsl(0, 0%, 10%);
 }
 
 body{
@@ -12,6 +12,6 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: hsl(0, 0%, 60%);
+    background-color: hsl(0, 0%, 90%);
     overflow: hidden;
 }

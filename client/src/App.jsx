@@ -11,7 +11,7 @@ const router = createBrowserRouter([
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
     { path: "/", element: <Chat /> },
-    { path: "/setAvt", element: <SetAvatar />}
+    { path: "/set-avt", element: <SetAvatar />}
 ])
 
 

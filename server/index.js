@@ -19,19 +19,21 @@ app.use(cors());
 const URI = "mongodb+srv://kath1512:pAtHsuhKReU5WD0V@cluster0.l0surwm.mongodb.net/";
 
 const connectDb = async () => {
-    try{
+    try {
         await mongoose.connect(URI);
         console.log("Connected to MongoDB")
     }
-    catch(err){
+    catch (err) {
         console.error(err);
     }
 }
 
 connectDb();
 
+
 app.use("/api/auth", authRoutes);
 app.use("/api/message", messageRoutes);
+
 
 const server = app.listen(5000, () => console.log('Start server at 5000'));
 
@@ -44,19 +46,20 @@ let userSocket = new Map();
 io.on("connection", (socket) => {
     console.log(socket.id);
     //get new user
-    socket.on("add-user", ({userId}) => {
+    socket.on("add-user", ({ userId }) => {
         userSocket.set(userId, socket.id);
     });
     //get message
     socket.on("add-msg", (params) => {
-        const {from, to, message} = params;
+        const { from, to, message, createdAt } = params;
         const targetedSocketId = userSocket.get(to);
-        if(!targetedSocketId) return;
+        if (!targetedSocketId) return;
         // foward message to targeted client
         socket.to(targetedSocketId).emit("new-msg", {
             from: from,
             fromSelf: false,
-            message: message
+            message: message,
+            createdAt
         });
 
     });

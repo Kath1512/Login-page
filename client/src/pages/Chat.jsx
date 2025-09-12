@@ -9,6 +9,8 @@ import Contact from "../component/Contact";
 import ContactHeader from "../component/chat_component/ContactHeader";
 import DisplayMessages from "../component/chat_component/DisplayMessages";
 import ChatInput from "../component/chat_component/ChatInput";
+import Welcome from "../component/chat_component/Welcome";
+import userContext from "../component/UserContext";
 
 export default function Chat() {
 
@@ -16,7 +18,8 @@ export default function Chat() {
     const [currentUser, setCurrentUser] = useState(null);
     const [currentChat, setCurrentChat] = useState(null);
     const [messages, setMessages] = useState([]);
-    const [arrivalMessage, setArrivalMessage] = useState('');
+    const [arrivalMessage, setArrivalMessage] = useState(null);
+    const [sentMessage, setSentMessage] = useState(null);
     const navigate = useNavigate();
 
     const socket = useRef();
@@ -57,7 +60,6 @@ export default function Chat() {
             if(arrivalMessage.from != currentChat._id){
                 return;
             }
-            delete arrivalMessage.from;
             setMessages(prevMessages => [...prevMessages, arrivalMessage]);
         }
     }, [arrivalMessage]);
@@ -65,22 +67,56 @@ export default function Chat() {
 
     //fetch current user and all contacts from local storage
 
+    function getSortedContacts(contacts) {
+        return contacts.sort((a, b) => {
+            const aTime = new Date(a?.lastMessage ? a.lastMessage.createdAt : 0);
+            const bTime = new Date(b?.lastMessage ? b.lastMessage.createdAt : 0);
+            return bTime.getTime() - aTime.getTime();
+        });
+    }
+
     useEffect(() => {
-        const storedData = JSON.parse(localStorage.getItem('current-chat-user'));
-        if (!storedData) {
+        const thisUser = JSON.parse(localStorage.getItem('current-chat-user'));
+        if (!thisUser) {
             navigate('/login');
         }
-        const thisUser = storedData.user;
         const getAllUsers = async () => {
-            const res = await axios.get('http://localhost:5000/api/auth/allUsers');
-            const newContacts = res.data.filter(user => {
-                if (user._id != thisUser._id) return user;
-            });
-            setContacts(newContacts);
+            const res = await axios.get(`http://localhost:5000/api/auth/allUsers?userId=${thisUser._id}`);
+            setContacts(getSortedContacts(res.data));
             setCurrentUser(thisUser);
         }
         getAllUsers();
     }, []);
+
+    //sort contact when received or sent message
+    useEffect(() => {
+        if(!contacts || !arrivalMessage) return;
+        const newContacts = contacts.map((el => {
+            if(el._id == arrivalMessage.from){
+                console.log(arrivalMessage);
+                return {
+                    ...el, 
+                    lastMessage: arrivalMessage
+                };
+            } else return el;
+        }));
+        setContacts(getSortedContacts(newContacts));
+
+    }, [arrivalMessage]);
+
+    useEffect(() => {
+        if(!contacts || !sentMessage) return;
+        const newContacts = contacts.map((el => {
+            if(el._id == currentChat._id){
+                return {
+                    ...el, 
+                    lastMessage: sentMessage
+                };
+            } else return el;
+        }));
+        setContacts(getSortedContacts(newContacts));
+
+    }, [sentMessage]);
 
 
 
@@ -95,27 +131,35 @@ export default function Chat() {
                 });
                 const allMessages = res.data.allMessages;
                 setMessages(allMessages);
-                console.log(allMessages);
+                // console.log(allMessages);
             }
         }
         getCurrentChatMessage();
     }, [currentChat]);
 
 
+
     async function handleSendMessage(currentMessage) {
         
         sendCurrentMessageToServer(currentMessage);
 
-        socket.current.emit("add-msg", {
+        const newSentMessage = {
             from: currentUser._id,
             to: currentChat._id,
-            message: currentMessage
-        });
+            message: currentMessage,
+            createdAt: Date.now()
+        }
+
+        socket.current.emit("add-msg", newSentMessage);
+
+        setSentMessage(newSentMessage);
 
         const newMessage = {
             fromSelf: true,
             message: currentMessage
         }
+
+        console.log(newMessage);
 
         setMessages(prevMessages => [
             ...prevMessages, newMessage
@@ -132,13 +176,12 @@ export default function Chat() {
         });
         const data = res.data;
         console.log(data);
-    }
+    }   
     //render
     return (
-        <>
-            <Logout />
+        <userContext.Provider value={currentUser}>
             <div className="container">
-                {contacts ? <Contact contacts={contacts} setCurrentChat={setCurrentChat} currentChat={currentChat}/> : <Loading />}
+                {contacts ? <Contact allContacts={contacts} setCurrentChat={setCurrentChat} currentChat={currentChat}/> : <Loading />}
 
                 {currentUser && (currentChat ? (
                     <div className='chat-container'>
@@ -146,10 +189,8 @@ export default function Chat() {
                         <DisplayMessages messages={messages}/>
                         <ChatInput handleSendMessage={handleSendMessage}/>
                     </div>
-                ) : (
-                    <h1>Welcome {currentUser.username}!</h1>
-                ))}
+                ) : <Welcome />)}
             </div>
-        </>
+        </userContext.Provider>
     )
 }

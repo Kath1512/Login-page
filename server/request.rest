@@ -31,4 +31,4 @@ Content-Type: application/json
 }
 
 ###
-GET  http://localhost:5000/api/auth/allUsers
+GET  http://localhost:5000/api/auth/allUsers?userId=68b79ff0196fe5b622325531

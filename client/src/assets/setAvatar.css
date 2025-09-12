@@ -1,0 +1,11 @@
+.all-buttons{
+    display: flex;
+    gap: 1rem;
+}
+
+img.avt-preview{
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+}

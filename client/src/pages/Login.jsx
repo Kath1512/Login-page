@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import '../assets/form.css'
 import axios from "axios";
-import userContext from "../UserContext";
+import { ToastContainer, toast } from 'react-toastify';
 
 function Login() {
 
@@ -11,6 +11,12 @@ function Login() {
         username: '',
         password: ''
     })
+
+    const toastOptions = {
+        position: "bottom-right",
+        autoclose: 8000,
+        draggable: true,
+    }
 
     useEffect(() => {
         const data = JSON.parse(localStorage.getItem('current-chat-user'));
@@ -33,11 +39,10 @@ function Login() {
             const res = await axios.post(API_URL, {...values});
             const data = res.data;
             if(data.status === false){
-                alert(data.message);
+                toast.error(data.message, toastOptions);
             }
             else{
-                alert(data.message);
-                localStorage.setItem('current-chat-user', JSON.stringify(data));
+                localStorage.setItem('current-chat-user', JSON.stringify(data.user));
                 navigate("/");
             }
         }
@@ -47,27 +52,30 @@ function Login() {
     }
 
     return(
-        <div className="form-container">
-            <form onSubmit={handleSubmit}>
-                <h1>Login</h1>
-                <input 
-                    type="text"
-                    placeholder="Username"
-                    name="username"
-                    onChange={handleInput}
-                />
-                <input 
-                    type="password"
-                    placeholder="Password"
-                    name="password"
-                    onChange={handleInput}
-                />
-                <button type="Submit">
-                    Sign in
-                </button>
-                <p>Dont have an account? <Link to="/register">Register here</Link></p>
-            </form>
-        </div>
+        <>
+            <div className="auth-form-container">
+                <form onSubmit={handleSubmit}>
+                    <h1>Login</h1>
+                    <input 
+                        type="text"
+                        placeholder="Username"
+                        name="username"
+                        onChange={handleInput}
+                    />
+                    <input 
+                        type="password"
+                        placeholder="Password"
+                        name="password"
+                        onChange={handleInput}
+                    />
+                    <button type="Submit">
+                        Sign in
+                    </button>
+                    <p>Dont have an account? <Link to="/register">Register here</Link></p>
+                </form>
+            </div>
+            <ToastContainer />
+        </>
     )
 }
 

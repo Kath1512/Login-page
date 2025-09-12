@@ -1,4 +1,5 @@
 const User = require('../models/userModel');
+const Message = require('../models/messageModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { generateAccessToken, generateRefreshToken, authenticateToken } = require('./auth');
@@ -30,7 +31,7 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
     const {username, password} = req.body;
-    const user = await User.findOne({username: username});
+    const user = await User.findOne({username: username}).lean();
     if(!user){
         return res.json({message: "Invalid username", status: false});
     }
@@ -50,7 +51,10 @@ const login = async (req, res) => {
     refreshTokens.push(refreshToken);
     return res.json({user: {
         username: user.username,
-        _id: user._id
+        _id: user._id,
+        avatar: {
+            link: user.avatar.link
+        }
     }, message: "Login successfully", status: true, accessToken});
 }
 
@@ -75,10 +79,35 @@ const getNewAccessToken = async(req, res) => {
 }
 
 const getAllUsers = async(req, res) => {
-    const allUsers = await User.find({}).select('username');
-    res.json(allUsers);
+    const currentUserId = req.query.userId;
+    const allUsers = await User.find({
+        _id: {$ne: currentUserId}
+    }).select("-password -email").lean();
+    const newAllUsers = await Promise.all(allUsers.map(async (user) => {
+        const lastMessage = await Message.findOne({
+            users: {$all: [currentUserId, user._id.toString()]}
+        }).sort({ createdAt: -1}).lean();
+        return {
+            ...user,
+            lastMessage: lastMessage
+        }
+    }));
+    res.json(newAllUsers);
 }
 
-module.exports = {register, login, authenticateToken, getProfile, getNewAccessToken, getAllUsers};
+const setAvatar = async (req, res) => {
+    const { username, avatarLink } = req.body;
+    try {
+        const user = await User.findOneAndUpdate(
+            { username: username },
+            { $set: { "avatar.link": avatarLink } }
+        );
+        res.json({ message: "Add user avatar successfully", status: true });
+    } catch(err){
+        console.error(err);
+    }
+
+}
+module.exports = {register, login, authenticateToken, getProfile, getNewAccessToken, getAllUsers, setAvatar};
 
 
