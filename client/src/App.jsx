@@ -1,26 +1,30 @@
-import { createContext, useEffect, useState } from 'react'
-import {createBrowserRouter, RouterProvider, useNavigate} from 'react-router'
-import Register from './pages/Register.jsx'
-import Login from './pages/Login.jsx'
-import userContext from './UserContext.jsx'
-import axios from 'axios'
-import SetAvatar from './pages/SetAvatar.jsx'
-import Chat from './pages/Chat.jsx'
+import { createBrowserRouter, RouterProvider } from 'react-router'
+import { Suspense, lazy } from 'react'
+import Loading from './component/Loading.jsx';
+import "./assets/Chat.css"
+import "./assets/form.css"
+import "./assets/setAvatar.css"
+import "./assets/index.css"
+
+const Register = lazy(() => import('./pages/Register.jsx'));
+const Login = lazy(() => import('./pages/Login.jsx'));
+const SetAvatar = lazy(() => import('./pages/SetAvatar.jsx'));
+const Chat = lazy(() => import('./pages/Chat.jsx'));
 
 const router = createBrowserRouter([
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
     { path: "/", element: <Chat /> },
-    { path: "/set-avt", element: <SetAvatar />}
+    { path: "/set-avt", element: <SetAvatar /> }
 ])
 
 
 function App() {
-
-
-    return(
+    return (
+        <Suspense fallback={<Loading message={"..."}/>}>
             <RouterProvider router={router}>
             </RouterProvider>
+        </Suspense>
     )
 }
 

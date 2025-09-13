@@ -71,7 +71,7 @@ function Login() {
                     <button type="Submit">
                         Sign in
                     </button>
-                    <p>Dont have an account? <Link to="/register">Register here</Link></p>
+                    <p>Don't have an account? <Link to="/register">Register here</Link></p>
                 </form>
             </div>
             <ToastContainer />

@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 const app = express();
 const cookieParser = require('cookie-parser');
 const { Server } = require('socket.io');
+const path = require("path");
 
 require('dotenv').config();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 
+app.use(express.static(path.join(__dirname, "..", "client", "dist")));
 
 const URI = "mongodb+srv://kath1512:pAtHsuhKReU5WD0V@cluster0.l0surwm.mongodb.net/";
 

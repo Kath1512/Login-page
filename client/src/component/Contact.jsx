@@ -23,6 +23,12 @@ export default function Contact({ allContacts, setCurrentChat, currentChat }) {
                     let thisClass = "chat-item";
                     if (currentChat && contact._id === currentChat._id) thisClass += " selected";
                     const currentTime = new Date(new Date(contact?.lastMessage?.createdAt).getTime() + 7 * 3600 * 1000);
+                    const hour = currentTime.getUTCHours().toLocaleString('en-US', {
+                        minimumIntegerDigits: 2
+                    });
+                    const minute = currentTime.getUTCMinutes().toLocaleString('en-US', {
+                        minimumIntegerDigits: 2
+                    });
                     return (
                         <div className={thisClass} onClick={() => setCurrentChat(contact)} key={contact._id}>
                             <img src={contact.avatar.link} alt="User avatar" className="user-avt" />
@@ -33,7 +39,7 @@ export default function Contact({ allContacts, setCurrentChat, currentChat }) {
                             <div className="chat-meta-data">
                                 {contact.lastMessage && (<div className="last-message-time">
                                     <div>{currentTime.toISOString().split('T')[0]}</div>
-                                    <div>{`${currentTime.getUTCHours()}:${currentTime.getUTCMinutes()}`}</div>
+                                    <div>{`${hour}:${minute}`}</div>
                                 </div>)}
                             </div>
                         </div>

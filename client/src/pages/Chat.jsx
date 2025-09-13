@@ -1,8 +1,6 @@
 import axios from "axios";
-import { useRef, useEffect, useState, use } from "react"
+import { useRef, useEffect, useState } from "react"
 import { useNavigate } from "react-router"
-import "../assets/Chat.css"
-import Logout from "../component/Logout";
 import { io } from "socket.io-client";
 import Loading from "../component/Loading";
 import Contact from "../component/Contact";
@@ -27,11 +25,11 @@ export default function Chat() {
     //socket connection
     useEffect(() => {
 
-        if(currentUser){
+        if (currentUser) {
 
             const hostURL = "http://localhost:5000";
             socket.current = io(hostURL);
-            
+
             //add socket user to server
 
             socket.current.emit("add-user", {
@@ -47,7 +45,7 @@ export default function Chat() {
         }
 
         return () => {
-            if(socket.current) {
+            if (socket.current) {
                 socket.current.disconnect();
             }
         }
@@ -56,14 +54,14 @@ export default function Chat() {
 
     //add arrival message to messages and display
     useEffect(() => {
-        if(arrivalMessage && currentChat){
-            if(arrivalMessage.from != currentChat._id){
+        if (arrivalMessage && currentChat) {
+            if (arrivalMessage.from != currentChat._id) {
                 return;
             }
             setMessages(prevMessages => [...prevMessages, arrivalMessage]);
         }
     }, [arrivalMessage]);
-    
+
 
     //fetch current user and all contacts from local storage
 
@@ -90,12 +88,12 @@ export default function Chat() {
 
     //sort contact when received or sent message
     useEffect(() => {
-        if(!contacts || !arrivalMessage) return;
+        if (!contacts || !arrivalMessage) return;
         const newContacts = contacts.map((el => {
-            if(el._id == arrivalMessage.from){
+            if (el._id == arrivalMessage.from) {
                 console.log(arrivalMessage);
                 return {
-                    ...el, 
+                    ...el,
                     lastMessage: arrivalMessage
                 };
             } else return el;
@@ -105,11 +103,11 @@ export default function Chat() {
     }, [arrivalMessage]);
 
     useEffect(() => {
-        if(!contacts || !sentMessage) return;
+        if (!contacts || !sentMessage) return;
         const newContacts = contacts.map((el => {
-            if(el._id == currentChat._id){
+            if (el._id == currentChat._id) {
                 return {
-                    ...el, 
+                    ...el,
                     lastMessage: sentMessage
                 };
             } else return el;
@@ -140,7 +138,7 @@ export default function Chat() {
 
 
     async function handleSendMessage(currentMessage) {
-        
+
         sendCurrentMessageToServer(currentMessage);
 
         const newSentMessage = {
@@ -176,18 +174,18 @@ export default function Chat() {
         });
         const data = res.data;
         console.log(data);
-    }   
+    }
     //render
     return (
         <userContext.Provider value={currentUser}>
             <div className="container">
-                {contacts ? <Contact allContacts={contacts} setCurrentChat={setCurrentChat} currentChat={currentChat}/> : <Loading />}
+                {contacts ? <Contact allContacts={contacts} setCurrentChat={setCurrentChat} currentChat={currentChat} /> : <Loading />}
 
                 {currentUser && (currentChat ? (
                     <div className='chat-container'>
-                        <ContactHeader currentChat={currentChat}/>
-                        <DisplayMessages messages={messages}/>
-                        <ChatInput handleSendMessage={handleSendMessage}/>
+                        <ContactHeader currentChat={currentChat} />
+                        <DisplayMessages messages={messages} />
+                        <ChatInput handleSendMessage={handleSendMessage} />
                     </div>
                 ) : <Welcome />)}
             </div>
