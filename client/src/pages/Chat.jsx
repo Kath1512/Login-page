@@ -9,6 +9,7 @@ import DisplayMessages from "../component/chat_component/DisplayMessages";
 import ChatInput from "../component/chat_component/ChatInput";
 import Welcome from "../component/chat_component/Welcome";
 import userContext from "../component/UserContext";
+import { addMessageRoute, getAllUsersRoute, getMessageRoute } from "../utils/APIRoutes";
 
 export default function Chat() {
 
@@ -79,7 +80,7 @@ export default function Chat() {
             navigate('/login');
         }
         const getAllUsers = async () => {
-            const res = await axios.get(`http://localhost:5000/api/auth/allUsers?userId=${thisUser._id}`);
+            const res = await axios.get(`${getAllUsersRoute}?userId=${thisUser._id}`);
             setContacts(getSortedContacts(res.data));
             setCurrentUser(thisUser);
         }
@@ -122,7 +123,6 @@ export default function Chat() {
     useEffect(() => {
         const getCurrentChatMessage = async () => {
             if (currentUser && currentChat) {
-                const getMessageRoute = "http://localhost:5000/api/message/getMessage";
                 const res = await axios.post(getMessageRoute, {
                     from: currentUser._id,
                     to: currentChat._id
@@ -166,7 +166,6 @@ export default function Chat() {
     }
     //send message to server to update DB
     const sendCurrentMessageToServer = async (message) => {
-        const addMessageRoute = "http://localhost:5000/api/message/addMessage";
         const res = await axios.post(addMessageRoute, {
             from: currentUser._id,
             to: currentChat._id,

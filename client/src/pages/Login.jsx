@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import '../assets/form.css'
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
+import { loginRoute } from "../utils/APIRoutes";
 
 function Login() {
 
@@ -34,9 +35,8 @@ function Login() {
 
     async function handleSubmit(event) {
         event.preventDefault();
-        const API_URL = "http://localhost:5000/api/auth/login";
         try{
-            const res = await axios.post(API_URL, {...values});
+            const res = await axios.post(loginRoute, {...values});
             const data = res.data;
             if(data.status === false){
                 toast.error(data.message, toastOptions);

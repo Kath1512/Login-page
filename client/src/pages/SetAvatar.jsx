@@ -3,6 +3,7 @@ import '../assets/setAvatar.css'
 import axios from "axios";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import { SetAvatarRoute } from "../utils/APIRoutes";
 
 export default function SetAvatar() {
     const [avatarLink, setAvatarLink] = useState("");
@@ -25,8 +26,7 @@ export default function SetAvatar() {
         event.preventDefault();
         //send avt to server
         try{
-            const API_URL = "http://localhost:5000/api/auth/set-avt";
-            const res = await axios.post(API_URL, {
+            const res = await axios.post(SetAvatarRoute, {
                 username: currentUser.username,
                 avatarLink: avatarLink
             });

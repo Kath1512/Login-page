@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import '../assets/form.css'
 import axios from 'axios'
 import { ToastContainer, toast } from 'react-toastify';
+import { registerRoute } from "../utils/APIRoutes";
 function Register() {
 
     const navigate = useNavigate();
@@ -57,9 +58,8 @@ function Register() {
             toast.error(validationResponse.message, toastOptions);
             return;
         }
-        const API_URL = "http://localhost:5000/api/auth/register";
         try {
-            const res = await axios.post(API_URL, {
+            const res = await axios.post(registerRoute, {
                 password: password,
                 email: email,
                 username: username
