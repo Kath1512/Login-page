@@ -1,17 +1,17 @@
-const host = "http://localhost:5000";
+const HOST = "";
 
 
-//auth route   host/api/auth/
-const loginRoute = `${host}/api/auth/login`;
-const registerRoute = `${host}/api/auth/register`;
-const getAllUsersRoute = `${host}/api/auth/allUsers`;
-const refreshTokenRoute = `${host}/api/auth/refresh`;
-const SetAvatarRoute = `${host}/api/auth/set-avt`;
+//auth route   HOST/api/auth/
+const loginRoute = `${HOST}/api/auth/login`;
+const registerRoute = `${HOST}/api/auth/register`;
+const getAllUsersRoute = `${HOST}/api/auth/allUsers`;
+const refreshTokenRoute = `${HOST}/api/auth/refresh`;
+const SetAvatarRoute = `${HOST}/api/auth/set-avt`;
 
-//message route   host/api/message/
-const getMessageRoute = `${host}/api/message/getMessage`;
-const addMessageRoute = `${host}/api/message/addMessage`;
+//message route   HOST/api/message/
+const getMessageRoute = `${HOST}/api/message/getMessage`;
+const addMessageRoute = `${HOST}/api/message/addMessage`;
 
 export {loginRoute, registerRoute,getAllUsersRoute,refreshTokenRoute,SetAvatarRoute,
-    getMessageRoute, addMessageRoute
+    getMessageRoute, addMessageRoute, HOST
 }

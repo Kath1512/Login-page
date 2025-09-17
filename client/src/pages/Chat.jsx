@@ -9,7 +9,7 @@ import DisplayMessages from "../component/chat_component/DisplayMessages";
 import ChatInput from "../component/chat_component/ChatInput";
 import Welcome from "../component/chat_component/Welcome";
 import userContext from "../component/UserContext";
-import { addMessageRoute, getAllUsersRoute, getMessageRoute } from "../utils/APIRoutes";
+import { addMessageRoute, getAllUsersRoute, getMessageRoute, HOST } from "../utils/APIRoutes";
 
 export default function Chat() {
 
@@ -28,8 +28,7 @@ export default function Chat() {
 
         if (currentUser) {
 
-            const hostURL = "http://localhost:5000";
-            socket.current = io(hostURL);
+            socket.current = io(HOST);
 
             //add socket user to server
 

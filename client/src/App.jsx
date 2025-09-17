@@ -5,6 +5,7 @@ import "./assets/Chat.css"
 import "./assets/form.css"
 import "./assets/setAvatar.css"
 import "./assets/index.css"
+import ErrorPage from './pages/ErrorPage.jsx';
 
 const Register = lazy(() => import('./pages/Register.jsx'));
 const Login = lazy(() => import('./pages/Login.jsx'));
@@ -15,7 +16,8 @@ const router = createBrowserRouter([
     { path: "/login", element: <Login /> },
     { path: "/register", element: <Register /> },
     { path: "/", element: <Chat /> },
-    { path: "/set-avt", element: <SetAvatar /> }
+    { path: "/set-avt", element: <SetAvatar /> },
+    { path: "/*", element: <ErrorPage /> }
 ])
 
 
